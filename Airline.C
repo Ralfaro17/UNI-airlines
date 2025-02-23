@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <dos.h>
 
+
 /* inclusion de librerias para el uso de los graficos y mouse por parte del lenguaje */
 #include <graphics.h>
 #include <mouse.h>
@@ -16,30 +17,6 @@
 */
 int coco = DETECT, modo, errorcode;
 
-/*
-
-    funciones para definir la funciones del mouse
-        msituar - funcion para situar el puntero en un punto especifico
-            modo es el modo (no me acuero para que era XD)
-            x1 - parametro x en el plano donde se colocara horizontalmente
-            y1 -  parametro y en el plano donde se colocara verticalmente
-
-        minlimit - funcion para verificar si el mouse se encuentra en el area delimitada en el plano, esta funcion calcula el area de forma rectangular que el primer par de coordenadas es el punto mas alto derecho y el segundo par de puntos es el punto mas bajo al izquierda
-
-            modo es modo (sigo sin acordarme)
-            x1, y1 - primer par de coordenadas, lo cual respactivamente x1 es para el coordenada en horizontal y y1 para la vertical respectivamente
-            x2, y2 - segundo par de coordenadas, de tal manera que mismo modo que los punto x1 e y1 representan los dos puntos x2 e y2
-
-        mshow - funcion para mostrar el puntero
-            esta no tiene parametros de uso, por lo tanto su uso es unicamente llamar la funcion
-
-        mocultar - funcion para ocultar el punto
-            esta no tiene parametros de uso, por lo tanto su uso es unicamente llamar la funcion
-
-        mouseinit - funcion para inicializar el puntero del mouse
-            (esto en el documento de Grevin pero me da pereza buscarlo)
-
-*/
 void msituar(int modo, int x, int y);
 int minlimit(int modo, int x1, int y1, int x2, int y2);
 
@@ -62,7 +39,6 @@ int mouseinit(void)
         return (0);
     }
 }
-
 
 /* Macros y/o constantes para usar en multiples partes del codigo */
 #define MAX_ASIENTOS 10
@@ -106,6 +82,8 @@ int cancelar();
 int disponibilidad();
 int ver_boleto();
 
+void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color);
+
 /* Se genera el nombre de los asientos en base a la cantidad maxima, y su limite por filas */
 char letra = 65;
 char numero = '1';
@@ -113,9 +91,11 @@ char numero = '1';
 para asi parar a nombrar los asientos con letras minusculas */
 int superior = 0;
 
+int entrar, entrar2;
+
 int main()
 {
-    
+
     vcentro = (((55 - vlongitud) / 2) + 1);
     vcentromenu = (((30 - vlongitudmenu) / 2) + 1);
     /* for que recorre cada espacio de los asientos para asiganarlos como libres, darles nombre, y
@@ -149,7 +129,7 @@ int main()
         posicion[i][2] = '\0';
         numero++;
     }
-   
+
     /* inicialiar el modo grafico */
     initgraph(&coco, &modo, "C:\\turboc3\\bgi");
 
@@ -162,10 +142,27 @@ int main()
         getch();
         exit(1); /* terminate with an error code */
     }
-   
-    login();
-    system("cls");
-    
+
+    /* De una forma mas ordenada arreglo el ingreso
+
+            ingresar primero por el usuario        */
+    entrar = login("admin", "Usuario");
+
+    if (entrar == 1)
+    {
+        entrar2 = login("1234", "password");
+        if (entrar2 == 1)
+        {
+            cleardevice();
+            menu();
+        }
+    }
+    else
+    {
+        logout();
+    }
+
+
     return 0;
 }
 
@@ -191,109 +188,98 @@ void notBlank(char string[], char text[])
 /* xd */
 void logout()
 {
-
-    return;
+    cleardevice();
+    outtextxy(255, 220, "Saliendo");
+    getch();
+    exit(1);
 }
 
 /* Verifica que la clave y el usuario sean los correctos, y bloquea el programa al tercer intento */
-int login()
+int login(char validacion[20], char Campo[20])
 {
     char user[20];
     char key;
-    char userMostrar[20] = " ";
-    int intentos = 0, iUser = 0;
+    char EntradaTeclado[20] = "";
+    int iEntrada = 0, intentos = 3;
     char input_pass[20];
+    char errormsg[100] = "";
+    
+    pintarAreaRectangulo(0, 0, 680, 600, WIDE_DOT_FILL, BLUE);
+    outtextxy(255, 200, strcat("Ingrese el ", Campo));
 
-    setfillstyle(WIDE_DOT_FILL,BLUE);
-    rectangle(0,0,680,600);
-    bar(0,0,680,600);
-    outtextxy(250,200,"Ingrese su usuario");
-
-    do
-    {
+    /* Validar si se ha precionado una tecla */
+    do{  
+        /* Validamos si hay entrada por el teclado */
         if (kbhit())
         {
-            if(iUser >= 20)
+            printf("%i",iEntrada);
+            /* Validar si intentos se acabaron */
+            if (intentos <= 0)
             {
-
-                exit(1);
-
-            } 
-
-            key = getch();
-            
-            if(key == 13)
-            {
-                strcpy(user,userMostrar);
-                if (strcmp(user," ") != 0 && strcmp(user, "admin") == 0)
-                {
-                    break;
-                }
-                
-                
+                logout();
             }
 
+            /* se obtine la tecla presionada*/
+            key = getch();
 
-            userMostrar[iUser] = key;
-            iUser++;
-            outtextxy(255,210,userMostrar);
-            
-            if(key == 27)
+            /* Validamos si se la tecla precionada es enter y logica para el usuario*/
+            if (key == 13)
+            {
+                /* guardamos el string obtenido en la variable user */
+                strcpy(user, EntradaTeclado);
+                /* validamos si no es un espacio en blanco y si coincide con el usuario */
+                if (strcmp(user, " ") != 0 && strcmp(user, validacion) == 0)
+                {
+                    strcpy(EntradaTeclado, " ");
+                    pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
+                    return 1;
+                }
+
+                
+                /* evitar errores visuales */
+                if(intentos == 3)
+                {
+                    /* forma de dar como de mandar un mensaje de error segu el campo a leer*/
+                    strcat(errormsg,strcat("Ingrese el ", strcat(Campo, " correcto")));
+                    outtextxy(255, 220, errormsg);
+                }
+
+                strcpy(EntradaTeclado, " ");
+                pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
+                outtextxy(255, 210, EntradaTeclado);
+                intentos--;
+            }
+            /* logtica para borrar cuando le das a backspaces */
+            else if (key == 8 && iEntrada > 0)
+            {
+                /* Elimina el ultimo caracter escrito igualandolo a NULL */
+                EntradaTeclado[iEntrada] = 00;
+                /* Se borra los escrito ateriormnete tapandolo con un rectangulo, la distancia se calcula con respecto al valor de interacion que se calcula cuando se toca alguna tecla */
+                pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
+                iEntrada--;
+                outtextxy(255, 210, EntradaTeclado);
+            }
+            /* valida si no es el backspaces y si hya espcio para guardar el texto */
+            else if (key != 8 && iEntrada != 20)
+            {
+                /* guardamos en el la variable y lo mostramos */
+                EntradaTeclado[iEntrada] = key;
+                /* Se suma a la interacion */
+                iEntrada++;
+                /* se manda a imprimir */
+                outtextxy(255, 210, EntradaTeclado);
+            }
+
+            /* validar escape para salir del programa */
+            if (key == 27)
             {
                 exit(0);
             }
         }
-    } while (1);
-    
 
-    stringread = scanf("%[^\n]%*c", user);
-
-    /* misma logica que el notBlank(), pero con mas condiciones */
-    while (stringread != 1 || strcmp(user, "admin") != 0)
-    {
-        intentos++;
-        printf("\033[0;31m");
-        printf("Usuario incorrecto, ingrese nuevamente\n");
-        printf("\033[0m");
-        if (intentos == 3)
-        {
-            printf("\033[0;36m");
-            printf("Ha excedido el numero de intentos\n");
-            printf("\033[0m");
-            getch();
-            return 0;
-        }
-        fflush(stdin);
-        stringread = scanf("%[^\n]%*c", user);
-    }
-
-    printf("\033[0;32m");
-    printf("Usuario valido, ingrese su contrasena: ");
-    printf("\033[0m");
-    stringread = scanf("%[^\n]%*c", input_pass);
-
-    /* misma logica que el notBlank(), pero con mas condiciones */
-    while (stringread != 1 || strcmp(input_pass, "1234") != 0)
-    {
-        intentos++;
-        printf("\033[0;31m");
-        printf("Contrase%ca incorrecta, ingrese nuevamente\n", 164);
-        printf("\033[0m");
-        if (intentos == 3)
-        {
-            printf("\033[0;36m");
-            printf("Ha excedido el numero de intentos\n");
-            printf("\033[0m");
-            getch();
-            return 0;
-        }
-        fflush(stdin);
-        stringread = scanf("%[^\n]%*c", input_pass);
-    }
-
-    system("cls");
-    
-    return menu();
+    } while (intentos > 0);
+    free(errormsg);
+    return 0;
 }
 
 /* Muestra toda la interfaz de opciones que se pueden realizar,
@@ -1209,4 +1195,11 @@ int ver_boleto()
     system("cls");
 
     return menu();
+}
+
+void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
+{
+    setfillstyle(relleno, color);
+    rectangle(x, y, x2, y2);
+    bar(x, y, x2, y2);
 }
