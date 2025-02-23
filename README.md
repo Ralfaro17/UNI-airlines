@@ -6,7 +6,7 @@
 
 [!FUNCIONES]
 
->funciones para definir la funciones del mouse
+funciones para definir la funciones del mouse
         msituar - funcion para situar el puntero en un punto especifico
             modo es el modo (no me acuero para que era XD)
             x1 - parametro x en el plano donde se colocara horizontalmente
@@ -28,7 +28,7 @@
             (esto en el documento de Grevin pero me da pereza buscarlo)
 
 
-> pintarAreaRectangulo - Esta funcion es para mejorar el uso de tal forma que con una funcion haces las tres cosas rapido, cabe aclarar de definir y incializar el modo grafico
+pintarAreaRectangulo - Esta funcion es para mejorar el uso de tal forma que con una funcion haces las tres cosas rapido, cabe aclarar de definir y incializar el modo grafico
     los parametros de coordenadas son x e y los cuale sos dos para poder dar las dimeciones del rectangulo
     relleno - una constante de tipo entero la cuales estan en la tabla de abajo que ya estan definidas por la misma libreria
     Color - una constante de tipo entero la cuales representan los colore van del 0 al 15 siendo 0 negro, igualmente ya definidas por la libreria
