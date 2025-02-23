@@ -166,8 +166,8 @@ int main()
     return 0;
 }
 
-/* Se encarga de prevenir que un usuario ingrese un string en blanco */
 void notBlank(char string[], char text[])
+/* Se encarga de prevenir que un usuario ingrese un string en blanco */
 {
     printf("%s", text);
     stringread = scanf("%[^\n]%*c", string);
@@ -202,11 +202,11 @@ int login(char validacion[20], char Campo[20])
     char EntradaTeclado[20] = "";
     int iEntrada = 0, intentos = 3;
     char input_pass[20];
-    char errormsg[100] = "";
-    
+    char errormsg[100] = " ";
     pintarAreaRectangulo(0, 0, 680, 600, WIDE_DOT_FILL, BLUE);
-    outtextxy(255, 200, strcat("Ingrese el ", Campo));
-
+    outtextxy(255, 200, "Ingrese el ");
+    outtextxy(345, 200, Campo);
+    
     /* Validar si se ha precionado una tecla */
     do{  
         /* Validamos si hay entrada por el teclado */
@@ -249,15 +249,18 @@ int login(char validacion[20], char Campo[20])
                 outtextxy(255, 210, EntradaTeclado);
                 intentos--;
             }
-            /* logtica para borrar cuando le das a backspaces */
-            else if (key == 8 && iEntrada > 0)
+            /* logtica para borrar cuando l9e das a backspaces */
+            else if (key == 8 && iEntrada >= 0)
             {
                 /* Elimina el ultimo caracter escrito igualandolo a NULL */
                 EntradaTeclado[iEntrada] = 00;
                 /* Se borra los escrito ateriormnete tapandolo con un rectangulo, la distancia se calcula con respecto al valor de interacion que se calcula cuando se toca alguna tecla */
-                pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
+                pintarAreaRectangulo(235, 210, 275 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
                 iEntrada--;
                 outtextxy(255, 210, EntradaTeclado);
+
+                if (iEntrada < 0) iEntrada++;
+                
             }
             /* valida si no es el backspaces y si hya espcio para guardar el texto */
             else if (key != 8 && iEntrada != 20)
@@ -273,7 +276,7 @@ int login(char validacion[20], char Campo[20])
             /* validar escape para salir del programa */
             if (key == 27)
             {
-                exit(0);
+                logout();
             }
         }
 
