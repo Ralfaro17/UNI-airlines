@@ -6,7 +6,6 @@
 #include <conio.h>
 #include <dos.h>
 
-
 /* inclusion de librerias para el uso de los graficos y mouse por parte del lenguaje */
 #include <graphics.h>
 #include <mouse.h>
@@ -81,6 +80,7 @@ int adquirir();
 int cancelar();
 int disponibilidad();
 int ver_boleto();
+int Valoracion(char Entrada[20], char Validacion[20]);
 
 void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color);
 
@@ -143,15 +143,13 @@ int main()
         exit(1); /* terminate with an error code */
     }
 
-    /* De una forma mas ordenada arreglo el ingreso
 
-            ingresar primero por el usuario        */
-    entrar = login("admin", "Usuario");
 
-    if (entrar == 1)
+    /* Varifica si el usuario es correcto */
+    if (login("admin", "Usuario") == 0)
     {
-        entrar2 = login("1234", "password");
-        if (entrar2 == 1)
+      /* Verifica si la contraseña es correcta */
+        if (login("1234", "password") == 0)
         {
             cleardevice();
             menu();
@@ -161,7 +159,6 @@ int main()
     {
         logout();
     }
-
 
     return 0;
 }
@@ -202,17 +199,17 @@ int login(char validacion[20], char Campo[20])
     char EntradaTeclado[20] = "";
     int iEntrada = 0, intentos = 3;
     char input_pass[20];
-    char errormsg[100] = " ";
     pintarAreaRectangulo(0, 0, 680, 600, WIDE_DOT_FILL, BLUE);
     outtextxy(255, 200, "Ingrese el ");
     outtextxy(345, 200, Campo);
-    
+
     /* Validar si se ha precionado una tecla */
-    do{  
+    do
+    {
         /* Validamos si hay entrada por el teclado */
         if (kbhit())
         {
-            printf("%i",iEntrada);
+            printf("%i", iEntrada);
             /* Validar si intentos se acabaron */
             if (intentos <= 0)
             {
@@ -228,25 +225,23 @@ int login(char validacion[20], char Campo[20])
                 /* guardamos el string obtenido en la variable user */
                 strcpy(user, EntradaTeclado);
                 /* validamos si no es un espacio en blanco y si coincide con el usuario */
-                if (strcmp(user, " ") != 0 && strcmp(user, validacion) == 0)
+                if (strcmp(user, " ") != 0 && Valoracion(user, validacion) == 0)
                 {
                     strcpy(EntradaTeclado, " ");
                     pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
-                    return 1;
+                    return 0;
                 }
 
-                
                 /* evitar errores visuales */
-                if(intentos == 3)
+                if (intentos == 3)
                 {
                     /* forma de dar como de mandar un mensaje de error segu el campo a leer*/
-                    strcat(errormsg,strcat("Ingrese el ", strcat(Campo, " correcto")));
-                    outtextxy(255, 220, errormsg);
+                    outtextxy(245, 220, "Ingrese el campo correcto");
                 }
 
-                strcpy(EntradaTeclado, " ");
-                pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 220, WIDE_DOT_FILL, BLUE);
-                outtextxy(255, 210, EntradaTeclado);
+                strcpy(EntradaTeclado, 00);
+                pintarAreaRectangulo(245, 210, 265 + (15 * (iEntrada + 1)), 215, WIDE_DOT_FILL, BLUE);
+                iEntrada = 0;
                 intentos--;
             }
             /* logtica para borrar cuando l9e das a backspaces */
@@ -259,8 +254,9 @@ int login(char validacion[20], char Campo[20])
                 iEntrada--;
                 outtextxy(255, 210, EntradaTeclado);
 
-                if (iEntrada < 0) iEntrada++;
-                
+                /* para evitar errores con el borrado */
+                if (iEntrada < 0)
+                    iEntrada++;
             }
             /* valida si no es el backspaces y si hya espcio para guardar el texto */
             else if (key != 8 && iEntrada != 20)
@@ -281,8 +277,8 @@ int login(char validacion[20], char Campo[20])
         }
 
     } while (intentos > 0);
-    free(errormsg);
-    return 0;
+    /* manda falso*/
+    return 1;
 }
 
 /* Muestra toda la interfaz de opciones que se pueden realizar,
@@ -1205,4 +1201,31 @@ void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
     setfillstyle(relleno, color);
     rectangle(x, y, x2, y2);
     bar(x, y, x2, y2);
+}
+
+int Valoracion(char Entrada[20], char Validacion[20])
+{
+    int i = 0;
+    do
+    {
+        if (Entrada[i] > 96 && Entrada[i] < 123)
+            Entrada[i] = Entrada[i] - 32;
+
+        i++;
+    } while (Entrada[i] != NULL);
+    i = 0;
+    do
+    {
+        if (Validacion[i] > 96 && Validacion[i] < 123)
+            Validacion[i] = Validacion[i] - 32;
+            i++;
+    } while(Validacion[i] != NULL);
+    
+
+    if (strcmp(Entrada, Validacion) == 0)
+    {
+        printf("Sexo");
+        return 0;
+    }
+    return 1;
 }
