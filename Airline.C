@@ -6,7 +6,6 @@
 #include <conio.h>
 #include <dos.h>
 
-<<<<<<< HEAD
 #include "funciones.h"
 
 
@@ -15,8 +14,6 @@
 #define MAX_ASIENTOS_FILA 2
 #define MAX_COMPRA_UNITARIA 3
 #define PRECIO_BOLETO 100
-=======
->>>>>>> parent of 14ecfb8 (Login Terminado)
 
 /* inclusion de librerias para el uso de los graficos y mouse por parte del lenguaje */
 #include <graphics.h>
@@ -45,8 +42,6 @@ int asientos_disponibles = MAX_ASIENTOS;
 int boletos;
 int comprados[MAX_ASIENTOS][MAX_COMPRA_UNITARIA];
 
-<<<<<<< HEAD
-=======
 /*presentaciones de cuadros*/
 char vtitulo[] = " Presentacion del proyecto";
 char vtitulomenu[] = " ------------BIENVENIDO A UNI AIRLINES------------";
@@ -65,7 +60,6 @@ int ver_boleto();
 
 void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color);
 
->>>>>>> parent of 14ecfb8 (Login Terminado)
 /* Se genera el nombre de los asientos en base a la cantidad maxima, y su limite por filas */
 char letra = 65;
 char numero = '1';
@@ -128,7 +122,11 @@ int main()
             ingresar primero por el usuario        */
     entrar = login("admin", "Usuario");
 
+    /* Varifica si el usuario es correcto */
+    if (login("admin", "Usuario") == 0)
     {
+      /* Verifica si la contraseña es correcta */
+        if (login("1234", "password") == 0)
         {
             cleardevice();
             menu();
@@ -143,26 +141,6 @@ int main()
     return 0;
 }
 
-<<<<<<< HEAD
-=======
-void notBlank(char string[], char text[])
-/* Se encarga de prevenir que un usuario ingrese un string en blanco */
-{
-    printf("%s", text);
-    stringread = scanf("%[^\n]%*c", string);
-
-    /* Si stringread es distinto a 1, la lectura del string dio error y se vuelve a pedir */
-    while (stringread != 1)
-    {
-        printf("\033[0;31m");
-        printf("Asegurate de no dejar este campo en blanco, vuelve a ingresarlo \n");
-        printf("\033[0m");
-        fflush(stdin);
-        stringread = scanf("%[^\n]%*c", string);
-    }
-
-    return;
-}
 
 /* xd */
 void logout()
@@ -1185,4 +1163,3 @@ void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
     rectangle(x, y, x2, y2);
     bar(x, y, x2, y2);
 }
->>>>>>> parent of 14ecfb8 (Login Terminado)
