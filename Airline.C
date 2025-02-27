@@ -15,6 +15,7 @@
 /* inclusion de librerias para el uso de los graficos y mouse por parte del lenguaje */
 #include <graphics.h>
 #include <mouse.h>
+#include <math.h>
 /*
     funcion para inicializar el modo grafico
     coco porque lleva todo
@@ -25,7 +26,6 @@ int coco = DETECT, modo, errorcode;
 /* Variables iteradoras */
 int contador = 0, i, j, k;
 
-
 /* Variables para comprar boletos */
 int id, asientos[MAX_ASIENTOS];
 int boletos_comprados[MAX_ASIENTOS];
@@ -35,7 +35,6 @@ char asiento[100];
 int asientos_disponibles = MAX_ASIENTOS;
 int boletos;
 int comprados[MAX_ASIENTOS][MAX_COMPRA_UNITARIA];
-
 
 /* Prototipos de las funciones */
 void logout();
@@ -51,6 +50,19 @@ int Valoracion(char Entrada[20], char Validacion[20]);
 
 void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color);
 
+/* Una forma de almacenar los datos de los botones */
+typedef struct Botones
+{
+    /* Para manejar texto */
+    int Id;
+    /* el texto de Adentro */
+    char texto[50];
+    /* el Area de ellos, el indice indica si es x1 o x2 de tal manera que area[1] = x1 y area[3] = x2 */
+    int area[4];
+} Botones;
+
+/* prototipo de funcion para pintar botones*/
+void pintarBotones(Botones Boton, int Fondo, int Relleno, int Color);
 
 int main()
 {
@@ -68,11 +80,9 @@ int main()
         exit(1); /* terminate with an error code */
     }
 
-
-
     if (login("admin", "Usuario") == 0)
     {
-         
+
         if (login("1234", "password") == 0)
         {
             cleardevice();
@@ -84,10 +94,8 @@ int main()
         logout();
     }
 
-
     return 0;
 }
-
 
 /* xd */
 void logout()
@@ -109,13 +117,14 @@ int login(char validacion[20], char Campo[20])
     pintarAreaRectangulo(0, 0, 680, 600, WIDE_DOT_FILL, BLUE);
     outtextxy(255, 200, "Ingrese el ");
     outtextxy(345, 200, Campo);
-    
+
     /* Validar si se ha precionado una tecla */
-    do{  
+    do
+    {
         /* Validamos si hay entrada por el teclado */
         if (kbhit())
         {
-            printf("%i",iEntrada);
+            printf("%i", iEntrada);
             /* Validar si intentos se acabaron */
             if (intentos <= 0)
             {
@@ -138,9 +147,8 @@ int login(char validacion[20], char Campo[20])
                     return 0;
                 }
 
-                
                 /* evitar errores visuales */
-                if(intentos == 3)
+                if (intentos == 3)
                 {
                     outtextxy(245, 220, "Ingrese el campo correcto");
                 }
@@ -162,7 +170,6 @@ int login(char validacion[20], char Campo[20])
                 /* para evitar errores con el borrado */
                 if (iEntrada < 0)
                     iEntrada++;
-                
             }
             /* valida si no es el backspaces y si hay espcio para guardar el texto */
             else if (key != 8 && iEntrada != 20)
@@ -173,7 +180,6 @@ int login(char validacion[20], char Campo[20])
                 iEntrada++;
                 /* se manda a imprimir */
                 outtextxy(255, 210, EntradaTeclado);
-
             }
 
             /* validar escape para salir del programa */
@@ -191,13 +197,20 @@ int login(char validacion[20], char Campo[20])
 cada opcion retorna una funcion que ejecuta su accion correspondiente */
 int menu()
 {
-
+    pintarAreaRectangulo(0, 0, 680, 680, SOLID_FILL, LIGHTGRAY);
+    Botones botonPrueba;
+    botonPrueba.Id = 1;
+    botonPrueba.area[0] = 200;
+    botonPrueba.area[1] = 200;
+    botonPrueba.area[2] = 400;
+    botonPrueba.area[3] = 400;
+    strcpy(botonPrueba.texto,"PRIMER BOTON");
+    getch();
     return 1;
 }
 
 int presentacion()
 {
-
 
     return menu();
 }
@@ -213,13 +226,13 @@ int adquirir()
 indice/referencia o posicion que tiene guardados los datos de la persona */
 int cancelar()
 {
-    
+
     return menu();
 }
 
 int disponibilidad()
 {
-  
+
     return menu();
 }
 
@@ -227,18 +240,9 @@ int disponibilidad()
 ya lo demas que está comentado anteriormente, leer bien */
 int ver_boleto()
 {
-    
+
     return menu();
 }
-
-void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
-{
-    setfillstyle(relleno, color);
-    rectangle(x, y, x2, y2);
-    bar(x, y, x2, y2);
-}
-
-
 
 int Valoracion(char Entrada[20], char Validacion[20])
 {
@@ -255,9 +259,8 @@ int Valoracion(char Entrada[20], char Validacion[20])
     {
         if (Validacion[i] > 96 && Validacion[i] < 123)
             Validacion[i] = Validacion[i] - 32;
-            i++;
-    } while(Validacion[i] != NULL);
-    
+        i++;
+    } while (Validacion[i] != NULL);
 
     if (strcmp(Entrada, Validacion) == 0)
     {
@@ -265,4 +268,53 @@ int Valoracion(char Entrada[20], char Validacion[20])
         return 0;
     }
     return 1;
+}
+
+/* Funcion para facilitar pintar rectangulos y simplificarlo */
+void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
+{
+    setfillstyle(relleno, color);
+    rectangle(x, y, x2, y2);
+    bar(x, y, x2, y2);
+}
+
+/* Funcion pra pintar botones de forma simplificada */
+void pintarBotones(Botones Boton, int Fondo, int Relleno, int Color)
+{
+    /* Variables que llevan el control de letras y margenes */
+    int punto_medio_X = round((Boton.area[0] + Boton.area[1]) / 2); /* Formula para encontrar el punto medio entre dos coordenadas */
+    int punto_medio_Y = round((Boton.area[2] + Boton.area[3]) / 2);
+    int Numero_de_Letras = strlen(Boton.texto); /* Funcion pora saber la cantidad de letras en un String */
+    char LPC[20]; /* Letras en Posiciones Correctas */ 
+    
+    /* se calcula el margen de donde se va a empezar a escribir el texto del boton, sabiendo el puto medio del boton y que las letras miden 5 pixeles de ancho entonces con solo restarle el numero de letras por su tamaño al punto medio, nos da la coordenada en X el cual va a centrar las letras  */
+    int margen = punto_medio_X - (Numero_de_Letras * 5);
+
+    /* Validamos si no se sobresale del area del boton, si se sobre sale le da un margen desde las coordenadas del margen + 5, otro punto a destacar porque es menor el margen obtenido? porque lo movemos hacia la izquierda en un plano carteaciano */
+    if (Boton.area[0] > margen)
+        margen = Boton.area[0] + 5;
+
+    /* Por si quieren con fondo o no :v */
+    if (Fondo == 1)
+    {
+        pintarAreaRectangulo(Boton.area[0], Boton.area[1], Boton.area[2], Boton.area[3], Relleno, Color);
+    }
+    else
+    {
+        /* por si no quieren */
+        rectangle(Boton.area[0], Boton.area[1], Boton.area[2], Boton.area[3]);
+    }
+
+    for (i = 0; i < Numero_de_Letras; i++)
+    {
+        int Posicion_Cursor = margen + (i * 5);
+        
+        if (Posicion_Cursor > Boton.area[3])
+        {
+            break;
+        }
+        LPC[i] = Boton.texto[i]; 
+    }
+    
+    outtextxy(margen, punto_medio_Y, LPC);
 }

@@ -1,13 +1,12 @@
 # Proyecto final de introducción a la ingeniería en computación
 
 > [!CAUTION]
-> Este programa está diseñado para ejecutarse en Turbo C++, utilizando el modor grafico proporcionado por la libreria Graphics.h nativa de Turbo C 2.0, pero se utilizo la version 3.0
+> Este programa está diseñado para ejecutarse en Turbo C++, utilizando el modor grafico proporcionado por la libreria nativa de turbo C 2.0, pero se ultizo la version 3.0
 
 
-**FUNCIONES**
+[!FUNCIONES]
 
 funciones para definir la funciones del mouse
-
         msituar - funcion para situar el puntero en un punto especifico
             modo es el modo (no me acuero para que era XD)
             x1 - parametro x en el plano donde se colocara horizontalmente
@@ -29,18 +28,17 @@ funciones para definir la funciones del mouse
             (esto en el documento de Grevin pero me da pereza buscarlo)
 
 
-pintarAreaRectangulo - Esta funcion es para mejorar el uso de tal forma que con una funcion haces las tres cosas rapido, cabe aclarar de definir y incializar el modo grafico primeramente
+pintarAreaRectangulo - Esta funcion es para mejorar el uso de tal forma que con una funcion haces las tres cosas rapido, cabe aclarar de definir y incializar el modo grafico
+    los parametros de coordenadas son x e y los cuale sos dos para poder dar las dimeciones del rectangulo
+    relleno - una constante de tipo entero la cuales estan en la tabla de abajo que ya estan definidas por la misma libreria
+    Color - una constante de tipo entero la cuales representan los colore van del 0 al 15 siendo 0 negro, igualmente ya definidas por la libreria
 
-        los parametros de coordenadas son x e y los cuale sos dos para poder dar las dimeciones del rectangulo
-        relleno - una constante de tipo entero la cuales estan en la tabla de abajo que ya estan definidas por la misma libreria
-        Color - una constante de tipo entero la cuales representan los colore van del 0 al 15 siendo 0 negro, igualmente ya definidas por la libreria
 
+>[!Curiosidades]
 
-**Curiosidades**
+> Hay unas funciones las cuales no estan definidas nativamente, que en este proyeco se desarrollaron para un uso mas consistente y de mayor facilidad
 
-Hay unas funciones las cuales no estan definidas nativamente, que en este proyeco se desarrollaron para un uso mas consistente y de mayor facilidad
-
-Entre las cuales tenemos los estilos de relleno que se stan utilizando y colores los cuales tambien como lo estilos son opcines definidas nativamente por la libreria conio.h aqui una tabla para los estilos de relleno y colores con sus corresponiente descripcion
+> Entre las cuales tenemos los estilos de relleno que se stan utilizando y colores los cuales tambien como lo estilos son opcines definidas nativamente por la libreria conio.h aqui una tabla para los estilos de relleno y colores con sus corresponiente descripcion
 
 
 | Constante        | **Descripción**                          |
