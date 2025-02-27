@@ -6,9 +6,6 @@
 #include <conio.h>
 #include <dos.h>
 
-#include "funciones.h"
-
-
 /* Macros y/o constantes para usar en multiples partes del codigo */
 #define MAX_ASIENTOS 10
 #define MAX_ASIENTOS_FILA 2
@@ -39,8 +36,6 @@ int asientos_disponibles = MAX_ASIENTOS;
 int boletos;
 int comprados[MAX_ASIENTOS][MAX_COMPRA_UNITARIA];
 
-/*presentaciones de cuadros*/
-int vlongitud, vlongitudmenu, xcol, xfil, vcolor, vcentromenu, vcentro;
 
 /* Prototipos de las funciones */
 void logout();
@@ -266,7 +261,7 @@ int Valoracion(char Entrada[20], char Validacion[20])
 
     if (strcmp(Entrada, Validacion) == 0)
     {
-        printf("Sexo");
+
         return 0;
     }
     return 1;
