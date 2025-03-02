@@ -17,14 +17,25 @@
 #include <mouse.h>
 #include <math.h>
 /*
-    funcion para inicializar el modo grafico
-    coco porque lleva todo
+funcion para inicializar el modo grafico
+coco porque lleva todo
 
 */
 int coco = DETECT, modo, errorcode;
 
 /* Variables iteradoras */
 int contador = 0, i, j, k;
+
+/* Una forma de almacenar los datos de los botones */
+typedef struct Botones
+{
+    /* Para manejar texto */
+    int Id;
+    /* el texto de Adentro */
+    char texto[50];
+    /* el Area de ellos, el indice indica si es x1 o x2 de tal manera que area[1] = x1 y area[3] = x2 */
+    int area[4];
+} Botones;
 
 /* Variables para comprar boletos */
 int id, asientos[MAX_ASIENTOS];
@@ -35,6 +46,12 @@ char asiento[100];
 int asientos_disponibles = MAX_ASIENTOS;
 int boletos;
 int comprados[MAX_ASIENTOS][MAX_COMPRA_UNITARIA];
+
+
+/* Botones separados en arreglos diferentes  */
+Botones BotonesMenu[4];
+int NumeroDeBotonesMenu = 4;
+
 
 /* Prototipos de las funciones */
 void logout();
@@ -47,19 +64,12 @@ int cancelar();
 int disponibilidad();
 int ver_boleto();
 int Valoracion(char Entrada[20], char Validacion[20]);
+int NumeroDeEspacios(char texto[50]);
 
+
+/* prototipo de funciones para vistas */
+void inicializarBotonesMenu();
 void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color);
-
-/* Una forma de almacenar los datos de los botones */
-typedef struct Botones
-{
-    /* Para manejar texto */
-    int Id;
-    /* el texto de Adentro */
-    char texto[50];
-    /* el Area de ellos, el indice indica si es x1 o x2 de tal manera que area[1] = x1 y area[3] = x2 */
-    int area[4];
-} Botones;
 
 /* prototipo de funcion para pintar botones*/
 void pintarBotones(Botones Boton, int Fondo, int Relleno, int Color);
@@ -86,6 +96,8 @@ int main()
         if (login("1234", "password") == 0)
         {
             cleardevice();
+            /* Inicializar botones del menu */
+            inicializarBotonesMenu();
             menu();
         }
     }
@@ -96,6 +108,52 @@ int main()
 
     return 0;
 }
+
+
+/* Muestra toda la interfaz de opciones que se pueden realizar,
+cada opcion retorna una funcion que ejecuta su accion correspondiente */
+int menu()
+{
+    
+    pintarAreaRectangulo(0, 0, 680, 680, SOLID_FILL, LIGHTGRAY);
+
+    for ( i = 0; i < NumeroDeBotonesMenu; i++)
+    {
+        pintarBotones(BotonesMenu[i],1,SOLID_FILL,BLUE);
+    }
+    
+
+    getch();
+    return 1;
+}
+
+void inicializarBotonesMenu()
+{
+    char *TextoBotones[] = {"COMPRAR", "CANCELAR", "COMPROBAR", "SALIR"};
+    int areasIniciales[4] = { 41, 41, 220, 91};
+
+    for ( i = 0; i < NumeroDeBotonesMenu; i++)
+    {
+        BotonesMenu[i].Id = 0;
+    }
+    
+    for (i = 0; i < NumeroDeBotonesMenu; i++)
+    {
+        strcpy(BotonesMenu[i].texto,TextoBotones[i]);
+    }
+    
+    for (i = 0; i < NumeroDeBotonesMenu; i++)
+    {
+        BotonesMenu[i].area[0] = areasIniciales[0];
+        BotonesMenu[i].area[1] = areasIniciales[1];
+        BotonesMenu[i].area[2] = areasIniciales[2];
+        BotonesMenu[i].area[3] = areasIniciales[3];
+
+        areasIniciales[1] += 60;
+        areasIniciales[3] += 60;
+    }
+}
+
 
 /* xd */
 void logout()
@@ -124,7 +182,6 @@ int login(char validacion[20], char Campo[20])
         /* Validamos si hay entrada por el teclado */
         if (kbhit())
         {
-            printf("%i", iEntrada);
             /* Validar si intentos se acabaron */
             if (intentos <= 0)
             {
@@ -158,7 +215,7 @@ int login(char validacion[20], char Campo[20])
                 intentos--;
             }
             /* logtica para borrar cuando l9e das a backspaces */
-            else if (key == 8 && iEntrada >= 0)
+            else if (key == 8 && iEntrada != -1)
             {
                 /* Elimina el ultimo caracter escrito igualandolo a NULL */
                 EntradaTeclado[iEntrada] = 00;
@@ -193,21 +250,7 @@ int login(char validacion[20], char Campo[20])
     return 1;
 }
 
-/* Muestra toda la interfaz de opciones que se pueden realizar,
-cada opcion retorna una funcion que ejecuta su accion correspondiente */
-int menu()
-{
-    pintarAreaRectangulo(0, 0, 680, 680, SOLID_FILL, LIGHTGRAY);
-    Botones botonPrueba;
-    botonPrueba.Id = 1;
-    botonPrueba.area[0] = 200;
-    botonPrueba.area[1] = 200;
-    botonPrueba.area[2] = 400;
-    botonPrueba.area[3] = 400;
-    strcpy(botonPrueba.texto,"PRIMER BOTON");
-    getch();
-    return 1;
-}
+
 
 int presentacion()
 {
@@ -270,6 +313,22 @@ int Valoracion(char Entrada[20], char Validacion[20])
     return 1;
 }
 
+int NumeroDeEspacios(char texto[50])
+{
+    int NDE = 0;
+    int i = 0;
+    do
+    {
+        if (texto[i] == 32)
+        {
+            NDE++;
+        }
+        i++;
+    } while (texto[i] != 00);
+
+    return NDE;
+}
+
 /* Funcion para facilitar pintar rectangulos y simplificarlo */
 void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
 {
@@ -282,19 +341,18 @@ void pintarAreaRectangulo(int x, int y, int x2, int y2, int relleno, int color)
 void pintarBotones(Botones Boton, int Fondo, int Relleno, int Color)
 {
     /* Variables que llevan el control de letras y margenes */
-    int punto_medio_X = round((Boton.area[0] + Boton.area[1]) / 2); /* Formula para encontrar el punto medio entre dos coordenadas */
-    int punto_medio_Y = round((Boton.area[2] + Boton.area[3]) / 2);
+    int punto_medio_X = floor((Boton.area[0] + Boton.area[2]) / 2); /* Formula para encontrar el punto medio entre dos coordenadas */
+    int punto_medio_Y = floor((Boton.area[1] + Boton.area[3]) / 2) - 4; /* -4 para ajustar la altura de los pixeles de las letras */
     int Numero_de_Letras = strlen(Boton.texto); /* Funcion pora saber la cantidad de letras en un String */
-    char LPC[20]; /* Letras en Posiciones Correctas */ 
-    
-    /* se calcula el margen de donde se va a empezar a escribir el texto del boton, sabiendo el puto medio del boton y que las letras miden 5 pixeles de ancho entonces con solo restarle el numero de letras por su tamaño al punto medio, nos da la coordenada en X el cual va a centrar las letras  */
-    int margen = punto_medio_X - (Numero_de_Letras * 5);
 
-    /* Validamos si no se sobresale del area del boton, si se sobre sale le da un margen desde las coordenadas del margen + 5, otro punto a destacar porque es menor el margen obtenido? porque lo movemos hacia la izquierda en un plano carteaciano */
+    /* se calcula el margen de donde se va a empezar a escribir el texto del boton, sabiendo el puto medio del boton y que las letras miden 5 pixeles de ancho por defecto, entonces con solo restarle el numero de letras por su tamaño al punto medio del cuadrado, nos da la coordenada en X el cual va a centrar las letras  */
+    int margen = punto_medio_X - (Numero_de_Letras * 4);
+
+    /* se calcula el margen de donde se va a empezar a escribir el texto del boton, sabiendo el puto medio del boton y que las letras miden 5 pixeles de ancho por defecto, entonces con solo restarle el numero de letras por su tamaño al punto medio del cuadrado, nos da la coordenada en X el cual va a centrar las letras  */
     if (Boton.area[0] > margen)
         margen = Boton.area[0] + 5;
 
-    /* Por si quieren con fondo o no :v */
+    /* Por si quier en con fondo o no :v */
     if (Fondo == 1)
     {
         pintarAreaRectangulo(Boton.area[0], Boton.area[1], Boton.area[2], Boton.area[3], Relleno, Color);
@@ -305,16 +363,6 @@ void pintarBotones(Botones Boton, int Fondo, int Relleno, int Color)
         rectangle(Boton.area[0], Boton.area[1], Boton.area[2], Boton.area[3]);
     }
 
-    for (i = 0; i < Numero_de_Letras; i++)
-    {
-        int Posicion_Cursor = margen + (i * 5);
-        
-        if (Posicion_Cursor > Boton.area[3])
-        {
-            break;
-        }
-        LPC[i] = Boton.texto[i]; 
-    }
-    
-    outtextxy(margen, punto_medio_Y, LPC);
+    settextjustify(punto_medio_X, punto_medio_Y);
+    outtextxy(margen, punto_medio_Y, Boton.texto);
 }
